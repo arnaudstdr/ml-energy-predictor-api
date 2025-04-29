@@ -1,18 +1,13 @@
 from flask import Flask, request, jsonify
-import joblib
-import pandas as pd
+from predict import predict_consumption
 
 app = Flask(__name__)
 
-# Load model
-model = joblib.load("app/model.pkl")
-
-@app.route('/predict', methods=['POST'])
+@app.route("/predict", methods=["POST"])
 def predict():
-    data = request.get_json()
-    df = pd.DataFrame([data])
-    prediction = model.predict(df)
-    return jsonify({'prediction': prediction[0]})
+    input_data = request.get_json()
+    prediction = predict_consumption(input_data)
+    return jsonify({"prediction": round(prediction, 2)})
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
